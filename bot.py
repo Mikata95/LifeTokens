@@ -38,21 +38,6 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive",
 ]
 
-# Load JSON credentials from environment variable
-SERVICE_JSON = os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"]
-creds_info = json.loads(SERVICE_JSON)
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_info, scope)
-client = gspread.authorize(creds)
-
-# Open the sheet by ID from environment variable
-SPREADSHEET_ID = os.environ["SPREADSHEET_ID"]
-sheet = client.open_by_key(SPREADSHEET_ID).sheet1
-
-spreadsheet = gclient.open_by_key(SPREADSHEET_ID)
-
-# Main data sheet (first worksheet)
-sheet = spreadsheet.sheet1
-
 # Users sheet to store chat_ids for daily reminders
 def get_or_create_users_ws():
     try:
@@ -202,6 +187,20 @@ def main():
     if not TELEGRAM_BOT_TOKEN or not SERVICE_JSON or not SPREADSHEET_ID:
         print("ERROR: Missing environment variables!")
         return
+    
+    # Load JSON credentials from environment variable
+    creds_info = json.loads(SERVICE_JSON)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_info, scope)
+    client = gspread.authorize(creds)
+
+    # Open the sheet by ID from environment variable
+    sheet = client.open_by_key(SPREADSHEET_ID).sheet1
+
+    spreadsheet = gclient.open_by_key(SPREADSHEET_ID)
+
+    # Main data sheet (first worksheet) 
+    sheet = spreadsheet.sheet1
+
     app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
