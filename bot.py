@@ -187,7 +187,7 @@ def main():
     REMINDER_TZ = os.getenv("REMINDER_TZ", "Europe/Rome")
     REMINDER_HOUR = int(os.getenv("REMINDER_HOUR", "22"))
     REMINDER_MINUTE = int(os.getenv("REMINDER_MINUTE", "0"))
-
+    print("ENV VARS:", list(os.environ.keys()))
     if not TELEGRAM_BOT_TOKEN or not SERVICE_JSON or not SPREADSHEET_ID:
         print("ERROR: Missing environment variables!")
         return
