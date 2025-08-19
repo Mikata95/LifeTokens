@@ -1,4 +1,5 @@
 import os
+print("TELEGRAM_BOT_TOKEN in env:", "TELEGRAM_BOT_TOKEN" in os.environ)
 import json
 from datetime import datetime
 import pytz
