@@ -16,7 +16,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 # =========================
 # REQUIRED:
 #   TELEGRAM_BOT_TOKEN          -> your BotFather token
-#   GOOGLE_SERVICE_ACCOUNT_JSON -> full JSON content of your Google service account
 #   SPREADSHEET_ID              -> the ID part from your Google Sheet URL
 # OPTIONAL:
 #   REMINDER_TZ                 -> timezone string (default "Europe/Rome")
@@ -182,18 +181,19 @@ async def send_daily_reminders(app: Application):
 # =========================
 def main():
     TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-    SERVICE_JSON = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
+    # SERVICE_JSON = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
     SPREADSHEET_ID = os.environ.get("SPREADSHEET_ID")
     REMINDER_TZ = os.getenv("REMINDER_TZ", "Europe/Rome")
     REMINDER_HOUR = int(os.getenv("REMINDER_HOUR", "22"))
     REMINDER_MINUTE = int(os.getenv("REMINDER_MINUTE", "0"))
     print("ENV VARS:", list(os.environ.keys()))
-    if not TELEGRAM_BOT_TOKEN or not SERVICE_JSON or not SPREADSHEET_ID:
+    if not TELEGRAM_BOT_TOKEN or not SPREADSHEET_ID:
         print("ERROR: Missing environment variables!")
         return
     
-    # Load JSON credentials from environment variable
-    creds_info = json.loads(SERVICE_JSON)
+    # Load JSON credentials from credentials.json file
+    with open("credentials.json", "r") as f:
+        creds_info = json.load(f)
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_info, SCOPE)
     client = gspread.authorize(creds)
 
