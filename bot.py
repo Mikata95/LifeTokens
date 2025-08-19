@@ -1,5 +1,4 @@
 import os
-print("TELEGRAM_BOT_TOKEN in env:", "TELEGRAM_BOT_TOKEN" in os.environ)
 import json
 from datetime import datetime
 import pytz
@@ -24,13 +23,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 #   REMINDER_HOUR               -> hour in 24h format (default 22)
 #   REMINDER_MINUTE             -> minute (default 0)
 
-TELEGRAM_BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
-SERVICE_JSON = os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"]
-SPREADSHEET_ID = os.environ["SPREADSHEET_ID"]
-
-REMINDER_TZ = os.getenv("REMINDER_TZ", "Europe/Rome")
-REMINDER_HOUR = int(os.getenv("REMINDER_HOUR", "22"))
-REMINDER_MINUTE = int(os.getenv("REMINDER_MINUTE", "0"))
 
 # Activities (emoji order must match sheet columns)
 ACTIVITIES = ["💪", "💻", "📚", "🧘", "🗣️", "🍲", "🏡"]
@@ -200,6 +192,16 @@ async def send_daily_reminders(app: Application):
 # Main entry
 # =========================
 def main():
+    TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+    SERVICE_JSON = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
+    SPREADSHEET_ID = os.environ.get("SPREADSHEET_ID")
+    REMINDER_TZ = os.getenv("REMINDER_TZ", "Europe/Rome")
+    REMINDER_HOUR = int(os.getenv("REMINDER_HOUR", "22"))
+    REMINDER_MINUTE = int(os.getenv("REMINDER_MINUTE", "0"))
+
+    if not TELEGRAM_BOT_TOKEN or not SERVICE_JSON or not SPREADSHEET_ID:
+        print("ERROR: Missing environment variables!")
+        return
     app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
